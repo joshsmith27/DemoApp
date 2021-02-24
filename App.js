@@ -1,10 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
+import { PermissionsAndroid } from 'react-native';
+import * as WifiManager from 'react-native-wifi-reborn';
+import * as Location from 'expo-location';
 
 export default function App() {
+	// console.log({ WifiManager });
 	const [manager, setManager] = React.useState(null);
+	const [granted, setGranted] = React.useState(true);
+	const [location, setLocation] = React.useState(null);
+	const [errorMsg, setErrorMsg] = React.useState(null);
+
+	React.useEffect(() => {
+		(async () => {
+			let { status } = await Location.requestPermissionsAsync();
+			if (status !== 'granted') {
+				setErrorMsg('Permission to access location was denied');
+				return;
+			}
+
+			let location = await Location.getCurrentPositionAsync({});
+			setLocation(location);
+			console.log(location);
+		})();
+	}, []);
+
 	const scanAndConnect = async () => {
 		manager.startDeviceScan(null, null, (error, device) => {
 			if (error) {
@@ -41,9 +63,41 @@ export default function App() {
 		}
 	}, [manager]);
 
+	React.useEffect(() => {
+		(async () => {
+			if (Platform.OS === 'android') {
+				const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+					title: 'Location permission is required for WiFi connections',
+					message: 'This app needs location permission as this is required  ' + 'to scan for wifi networks.',
+					buttonNegative: 'DENY',
+					buttonPositive: 'ALLOW',
+				});
+				if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+					setGranted(true);
+					console.log(`you're in the band!`);
+				} else {
+					console.log(`we're going to go another direction`);
+				}
+			}
+		})();
+	}, []);
+
+	React.useEffect(() => {
+		if (granted || Platform.OS === 'ios') {
+			WifiManager.default.getCurrentWifiSSID().then(
+				(ssid) => {
+					console.log('Your current connected wifi SSID is ' + ssid);
+				},
+				(error) => {
+					console.log({ error });
+				}
+			);
+		}
+	}, [granted]);
+
 	return (
 		<View style={styles.container}>
-			<Text>Yep I'm A Test</Text>
+			<Text>Yep I'm A Test Yelp</Text>
 			<StatusBar style="auto" />
 		</View>
 	);
