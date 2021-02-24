@@ -1,0 +1,38 @@
+[
+  {
+    "deviceID": "E8F3F712-5BD9-1142-353A-4586A516C7FB",
+    "isPrimary": true,
+    "uuid": "0000ffff-0000-1000-8000-00805f9b34fb",
+    "id": 10748538688,
+    "characteristics": [
+      {
+        "isIndicatable": false,
+        "isNotifiable": false,
+        "isWritableWithResponse": true,
+        "isWritableWithoutResponse": false,
+        "serviceID": 10748538688,
+        "isNotifying": false,
+        "value": null,
+        "uuid": "0000ff01-0000-1000-8000-00805f9b34fb",
+        "id": 10799891584,
+        "deviceID": "E8F3F712-5BD9-1142-353A-4586A516C7FB",
+        "isReadable": false,
+        "serviceUUID": "0000ffff-0000-1000-8000-00805f9b34fb"
+      },
+      {
+        "isIndicatable": false,
+        "isNotifiable": true,
+        "isWritableWithResponse": false,
+        "isWritableWithoutResponse": false,
+        "serviceID": 10748538688,
+        "isNotifying": false,
+        "value": null,
+        "uuid": "0000ff02-0000-1000-8000-00805f9b34fb",
+        "id": 10799893408,
+        "deviceID": "E8F3F712-5BD9-1142-353A-4586A516C7FB",
+        "isReadable": true,
+        "serviceUUID": "0000ffff-0000-1000-8000-00805f9b34fb"
+      }
+    ]
+  }
+]
