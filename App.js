@@ -1,59 +1,85 @@
-import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { BleManager } from 'react-native-ble-plx';
+import { StatusBar } from "expo-status-bar";
+import * as React from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Buffer } from "buffer";
+import { parseRequest } from "./hex";
+import { generateDataArray } from "./cmd";
+import { bleInit, monitor } from "./BLE";
 
 export default function App() {
-	const [manager, setManager] = React.useState(null);
-	const scanAndConnect = async () => {
-		manager.startDeviceScan(null, null, (error, device) => {
-			if (error) {
-				console.log({ error, stuff: 'crap' });
-				// Handle error (scanning will be stopped automatically)
-				return;
-			}
+  const [characteristics, setCharacteristics] = React.useState([]);
 
-			// Check if it is a device you are looking for based on advertisement data
-			// or other criteria.
-			console.log({ device: device.name });
-			if (device.name === 'C-by-GE-9B785A3D') {
-				// Stop scanning as it's not necessary if you are scanning for one device.
-				manager.stopDeviceScan();
+  React.useEffect(() => {
+    bleInit(setCharacteristics);
+  }, []);
 
-				// Proceed with connection.
-			}
-		});
-	};
-	React.useEffect(() => {
-		const response = new BleManager();
-		setManager(response);
-	}, []);
+  React.useEffect(() => {
+    if (characteristics.length > 0) monitor(characteristics);
+  }, [characteristics]);
 
-	React.useEffect(() => {
-		if (manager) {
-			const subscription = manager.onStateChange((state) => {
-				console.log({ state });
-				if (state === 'PoweredOn') {
-					scanAndConnect();
-					subscription.remove();
-				}
-			}, true);
-		}
-	}, [manager]);
+  const [c] = characteristics.filter((c) => c.isWritableWithResponse);
 
-	return (
-		<View style={styles.container}>
-			<Text>Yep I'm A Test</Text>
-			<StatusBar style="auto" />
-		</View>
-	);
+  return (
+    <View style={styles.container}>
+      {c && (
+        <>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={async () => {
+              try {
+                const [cmd] = generateDataArray("setNightLightStatus", true);
+                console.log("BLE REQUEST", cmd, parseRequest(cmd));
+                await c.writeWithResponse(
+                  Buffer.from(cmd, "hex").toString("base64")
+                );
+              } catch (error) {
+                console.log("WRITE ERROR", error);
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>I am Groot</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            title={"Off"}
+            onPress={async () => {
+              try {
+                const [cmd] = generateDataArray("setNightLightStatus", false);
+                console.log("BLE REQUEST", cmd, parseRequest(cmd));
+                await c.writeWithResponse(
+                  Buffer.from(cmd, "hex").toString("base64")
+                );
+              } catch (error) {
+                console.log("WRITE ERROR", error);
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>Off</Text>
+          </TouchableOpacity>
+        </>
+      )}
+      <StatusBar style="auto" />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    alignItems: "center",
+    margin: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#555",
+    borderRadius: 6,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: "#555",
+  },
 });
