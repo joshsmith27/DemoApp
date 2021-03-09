@@ -1,97 +1,409 @@
-const responseCommands = {
-  C9: "setHomeID",
-  D1: "setEmailID",
-  B1: "setSSID",
-  B5: "setPassword",
-  A9: "setFMState",
-  A5: "setFMFrequency",
-  C1: "SetAutoTune",
-  A1: "SetNextFMChannelID",
-  BD: "SetFMVolume",
-  95: "setAlarmLight",
-  99: "setPanicBuzzer",
-  D9: "setNightLightStatus",
-  51: "getFirmWareVersion",
-  55: "getHardwareVersion",
-  59: "getDeviceSerialNumber",
-  "5D": "getBatteryRemaining",
-  61: "getTotalBatteryCapacity",
-  65: "getBatterChargingStatus",
-  69: "getAlarmLightStatus",
-  "6D": "getSirenStatus",
-  71: "getFMChannelId",
-  75: "getSetFMChannelFrequency",
-  79: "getFMStatus",
-  "7D": "getFirmwareUpdateStatus",
-  81: "getWifiStatus",
-  85: "getWifiSignalStrength",
-  89: "getRouterSSID",
-  "8D": "getRadioVolume",
-  91: "getPresetFrequencies",
-  CD: "getHomeID",
-  D5: "getemailID",
-  DD: "getNightLightStatus",
-  B9: "resetDevice",
-  "9D": "setFMChannelID",
-  AD: "triggerFirmwareUpdate",
-};
+import { Buffer } from 'buffer';
 
-const requestCommands = {
-  "00": "noCommand",
-  BC: "setHomeID",
-  C4: "setEmailID",
-  A4: "setSSID",
-  A8: "setPassword",
-  "9C": "setFMState",
-  98: "setFMFrequency",
-  B4: "SetAutoTune",
-  94: "SetNextFMChannelID",
-  B0: "SetFMVolume",
-  88: "setAlarmLight",
-  "8C": "setPanicBuzzer",
-  CC: "setNightLightStatus",
-  44: "getFirmWareVersion",
-  48: "getHardwareVersion",
-  "4C": "getDeviceSerialNumber",
-  50: "getBatteryRemaining",
-  54: "getTotalBatteryCapacity",
-  58: "getBatterChargingStatus",
-  "5C": "getAlarmLightStatus",
-  60: "getSirenStatus",
-  64: "getFMChannelId",
-  68: "getSetFMChannelFrequency",
-  "6C": "getFMStatus",
-  70: "getFirmwareUpdateStatus",
-  74: "getWifiStatus",
-  78: "getWifiSignalStrength",
-  "7C": "getRouterSSID",
-  80: "getRadioVaolume",
-  84: "getPresetFrequencies",
-  C0: "getHomeID",
-  C8: "getemailID",
-  D0: "getNightLightStatus",
-  AC: "resetDevice",
-  90: "setFMChannelID",
-  A0: "triggerFirmwareUpdate",
-};
+const responseCommands = [
+  {
+    operation: 'setHomeID',
+    dataType: '',
+    code: 'C9',
+  },
+  {
+    operation: 'setEmailID',
+    dataType: 'string',
+    code: 'D1',
+  },
+  {
+    operation: 'setSSID',
+    dataType: 'string',
+    code: 'B1',
+  },
+  {
+    operation: 'setPassword',
+    dataType: 'string',
+    code: 'B5',
+  },
+  {
+    operation: 'setFMState',
+    dataType: 'number',
+    code: 'A9',
+  },
+  {
+    operation: 'setFMFrequency',
+    dataType: '',
+    code: 'A5',
+  },
+  {
+    operation: 'SetAutoTune',
+    dataType: '',
+    code: 'C1',
+  },
+  {
+    operation: 'SetNextFMChannelID',
+    dataType: '',
+    code: 'A1',
+  },
+  {
+    operation: 'SetFMVolume',
+    dataType: '',
+    code: 'BD',
+  },
+  {
+    operation: 'setAlarmLight',
+    dataType: 'number',
+    code: '95',
+  },
+  {
+    operation: 'setPanicBuzzer',
+    dataType: 'number',
+    code: '99',
+  },
+  {
+    operation: 'setNightLightStatus',
+    dataType: 'number',
+    code: 'D9',
+  },
+  {
+    operation: 'getFirmWareVersion',
+    dataType: 'string',
+    code: '51',
+  },
+  {
+    operation: 'getHardwareVersion',
+    dataType: 'string',
+    code: '55',
+  },
+  {
+    operation: 'getDeviceSerialNumber',
+    dataType: 'string',
+    code: '59',
+  },
+  {
+    operation: 'getBatteryRemaining',
+    dataType: 'number',
+    code: '5D',
+  },
+  {
+    operation: 'getTotalBatteryCapacity',
+    dataType: 'number',
+    code: '61',
+  },
+  {
+    operation: 'getBatterChargingStatus',
+    dataType: 'number',
+    code: '65',
+  },
+  {
+    operation: 'getAlarmLightStatus',
+    dataType: 'number',
+    code: '69',
+  },
+  {
+    operation: 'getSirenStatus',
+    dataType: 'number',
+    code: '6D',
+  },
+  {
+    operation: 'getFMChannelId',
+    dataType: '',
+    code: '71',
+  },
+  {
+    operation: 'getSetFMChannelFrequency',
+    dataType: '',
+    code: '75',
+  },
+  {
+    operation: 'getFMStatus',
+    dataType: 'number',
+    code: '79',
+  },
+  {
+    operation: 'getFirmwareUpdateStatus',
+    dataType: 'number',
+    code: '7D',
+  },
+  {
+    operation: 'getWifiStatus',
+    dataType: 'number',
+    code: '81',
+  },
+  {
+    operation: 'getWifiSignalStrength',
+    dataType: 'number',
+    code: '85',
+  },
+  {
+    operation: 'getRouterSSID',
+    dataType: 'string',
+    code: '89',
+  },
+  {
+    operation: 'getRadioVolume',
+    dataType: 'number',
+    code: '8D',
+  },
+  {
+    operation: 'getPresetFrequencies',
+    dataType: '',
+    code: '91',
+  },
+  {
+    operation: 'getHomeID',
+    dataType: 'string',
+    code: 'CD',
+  },
+  {
+    operation: 'getEmailID',
+    dataType: 'string',
+    code: 'D5',
+  },
+  {
+    operation: 'getNightLightStatus',
+    dataType: 'number',
+    code: 'DD',
+  },
+  {
+    operation: 'resetDevice',
+    dataType: '',
+    code: 'B9',
+  },
+  {
+    operation: 'setFMChannelID',
+    dataType: '',
+    code: '9D',
+  },
+  {
+    operation: 'triggerFirmwareUpdate',
+    dataType: '',
+    code: 'AD',
+  },
+  {
+    operation: null,
+    dataType: '',
+    code: '49',
+  },
+];
+
+const requestCommands = [
+  {
+    operation: 'noCommand',
+    dataType: 'string',
+    code: '00',
+  },
+  {
+    operation: 'setHomeID',
+    dataType: 'string',
+    code: 'BC',
+  },
+  {
+    operation: 'setEmailID',
+    dataType: 'string',
+    code: 'C4',
+  },
+  {
+    operation: 'setSSID',
+    dataType: 'string',
+    code: 'A4',
+  },
+  {
+    operation: 'setPassword',
+    dataType: 'string',
+    code: 'A8',
+  },
+  {
+    operation: 'setFMState',
+    dataType: 'string',
+    code: '9C',
+  },
+  {
+    operation: 'setFMFrequency',
+    dataType: 'string',
+    code: '98',
+  },
+  {
+    operation: 'SetAutoTune',
+    dataType: 'string',
+    code: 'B4',
+  },
+  {
+    operation: 'SetNextFMChannelID',
+    dataType: 'string',
+    code: '94',
+  },
+  {
+    operation: 'SetFMVolume',
+    dataType: 'string',
+    code: 'B0',
+  },
+  {
+    operation: 'setAlarmLight',
+    dataType: 'string',
+    code: '88',
+  },
+  {
+    operation: 'setPanicBuzzer',
+    dataType: 'string',
+    code: '8C',
+  },
+  {
+    operation: 'setNightLightStatus',
+    dataType: 'string',
+    code: 'CC',
+  },
+  {
+    operation: 'getFirmWareVersion',
+    dataType: 'string',
+    code: '44',
+  },
+  {
+    operation: 'getHardwareVersion',
+    dataType: 'string',
+    code: '48',
+  },
+  {
+    operation: 'getDeviceSerialNumber',
+    dataType: 'string',
+    code: '4C',
+  },
+  {
+    operation: 'getBatteryRemaining',
+    dataType: 'number',
+    code: '50',
+  },
+  {
+    operation: 'getTotalBatteryCapacity',
+    dataType: 'string',
+    code: '54',
+  },
+  {
+    operation: 'getBatterChargingStatus',
+    dataType: 'string',
+    code: '58',
+  },
+  {
+    operation: 'getAlarmLightStatus',
+    dataType: 'string',
+    code: '5C',
+  },
+  {
+    operation: 'getSirenStatus',
+    dataType: 'string',
+    code: '60',
+  },
+  {
+    operation: 'getFMChannelId',
+    dataType: 'string',
+    code: '64',
+  },
+  {
+    operation: 'getSetFMChannelFrequency',
+    dataType: 'string',
+    code: '68',
+  },
+  {
+    operation: 'getFMStatus',
+    dataType: 'string',
+    code: '6C',
+  },
+  {
+    operation: 'getFirmwareUpdateStatus',
+    dataType: 'string',
+    code: '70',
+  },
+  {
+    operation: 'getWifiStatus',
+    dataType: 'string',
+    code: '74',
+  },
+  {
+    operation: 'getWifiSignalStrength',
+    dataType: 'string',
+    code: '78',
+  },
+  {
+    operation: 'getRouterSSID',
+    dataType: 'string',
+    code: '7C',
+  },
+  {
+    operation: 'getRadioVaolume',
+    dataType: 'string',
+    code: '80',
+  },
+  {
+    operation: 'getPresetFrequencies',
+    dataType: 'string',
+    code: '84',
+  },
+  {
+    operation: 'getHomeID',
+    dataType: 'string',
+    code: 'C0',
+  },
+  {
+    operation: 'getemailID',
+    dataType: 'string',
+    code: 'C8',
+  },
+  {
+    operation: 'getNightLightStatus',
+    dataType: 'string',
+    code: 'D0',
+  },
+  {
+    operation: 'resetDevice',
+    dataType: 'string',
+    code: 'AC',
+  },
+  {
+    operation: 'setFMChannelID',
+    dataType: 'string',
+    code: '90',
+  },
+  {
+    operation: 'triggerFirmwareUpdate',
+    dataType: 'string',
+    code: 'A0',
+  },
+];
 
 const parse = (i1, i2, str) => parseInt(str.substring(i1, i2), 16);
 
-export function parseResponse(response) {
-  const dataLength = parse(10, 12, response);
-  const operationCode = response.substring(4, 6);
-  const operation =
-    operationCode === "49"
-      ? "Error: operation code mismatch"
-      : responseCommands[operationCode.toUpperCase()];
+function decodeHexString(hexString, map) {
+  const dataLength = parse(10, 12, hexString);
 
-  return `${operation} : ${parse(12, 12 + dataLength * 2, response)}`;
+  const operationCode = hexString.substring(4, 6);
+
+  const operationDetails = map.find((item) => item.code === operationCode.toUpperCase()) || {};
+
+  const rawData = hexString.substring(12, 12 + dataLength * 2);
+
+  const frameControl = hexString.substring(6, 8);
+
+  let data;
+  if (operationDetails.dataType === 'string') data = Buffer(rawData, 'hex').toString();
+  else if (operationDetails.dataType === 'number') data = parseInt(rawData, 16);
+
+  // if (operationDetails.operation === 'getRouterSSID') {
+  //   console.log('-------------------------------------');
+  //   console.log('hex', hexString);
+  //   console.log('dataLength', dataLength);
+  //   console.log('body', rawData);
+  //   console.log('string', Buffer(rawData, 'hex').toString());
+  //   console.log('number', parseInt(rawData, 16));
+  //   console.log('frameControl', frameControl);
+  // }
+
+  return {
+    frameControl,
+    operation: operationDetails.operation,
+    data: data,
+  };
 }
 
-export function parseRequest(request) {
-  const dataLength = parse(10, 12, request);
-  const operationCode = request.substring(4, 6);
-  const operation = requestCommands[operationCode];
+export function parseResponse(payload) {
+  return decodeHexString(payload, responseCommands);
+}
 
-  return `${operation} : ${parse(12, 12 + dataLength * 2, request)}`;
+export function parseRequest(payload) {
+  return decodeHexString(payload, requestCommands);
 }
